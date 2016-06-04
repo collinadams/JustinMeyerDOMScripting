@@ -1,13 +1,35 @@
 (function() {
   $ = function(selector) {};
 
-  $.extend = function(target, object) {};
+  $.extend = function(target, object) {
+    for(var prop in object){
+      if(object.hasOwnProperty(prop)){
+        target[prop] = object[prop];
+      }
+    }
+    return target;
+  };
 
   // Static methods
-  var isArrayLike = function(obj) {};
+  var isArrayLike = function(obj) {
+    if(typeof obj.length === 'number'){
+      if(obj.length === 0){
+        return true;
+      }else if(obj.length > 0){
+        return (obj.length - 1) in obj;
+      }
+    }
+    return false;
+  };
 
   $.extend($, {
-    isArray: function(obj) {},
+    isArray: function(obj) {
+      if(Object.prototype.toString.call(obj) === '[object Array]'){
+        return true;
+      }else{
+        return false;
+      }
+    },
     each: function(collection, cb) {},
     makeArray: function(arr) {},
     proxy: function(fn, context) {}
