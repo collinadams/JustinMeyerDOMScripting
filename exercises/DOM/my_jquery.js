@@ -1,5 +1,12 @@
 (function() {
-  $ = function(selector) {};
+  $ = function(selector) {
+    var elements = document.querySelectorAll(selector);
+    $.each(elements, $.proxy(function(index, element){
+      this[index] = element;
+    }, this));
+    // [].push.apply(this, elements);
+    this.length = elements.length;
+  };
 
   $.extend = function(target, object) {
     for(var prop in object){
@@ -30,9 +37,33 @@
         return false;
       }
     },
-    each: function(collection, cb) {},
-    makeArray: function(arr) {},
-    proxy: function(fn, context) {}
+    each: function(collection, cb) {
+      if(isArrayLike(collection)){
+        for(var i = 0; i < collection.length; i++){
+          cb.call(collection[i], i, collection[i]);
+        }
+      }else{
+        for(var prop in collection){
+          if(collection.hasOwnProperty(prop)){
+            cb.call(collection[prop], prop, collection[prop]);
+          }
+        }
+      }
+      return collection;
+    },
+    makeArray: function(arrayLike) {
+      var newArr = [];
+      $.each(arrayLike, function(ind, val){
+        newArr.push(val);
+      })
+      return newArr;
+    },
+    proxy: function(fn, context) {
+      return function(){
+        var passedArgs = Array.prototype.slice.call(arguments);
+        return fn.apply(context, passedArgs);
+      }
+    }
   });
 
   $.extend($.prototype, {
