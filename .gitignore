@@ -1,0 +1,8 @@
+slides
+*.DS_Store
+
+# Floobits
+.floo
+.floobit
+.floo
+.flooignore
