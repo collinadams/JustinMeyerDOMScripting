@@ -228,8 +228,16 @@
     },
 
     // Events
-    bind: function(eventName, handler) {},
-    unbind: function(eventName, handler) {},
+    bind: function(eventName, handler) {
+      return $.each(this, function(ind, el){
+        el.addEventListener(eventName, handler, false);
+      });
+    },
+    unbind: function(eventName, handler) {
+      return $.each(this, function(ind, el){
+        el.removeEventListener(eventName, handler, false);
+      });
+    },
     has: function(selector) {
       var elements = [];
 	
