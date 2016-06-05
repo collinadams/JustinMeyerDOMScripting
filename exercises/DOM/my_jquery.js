@@ -110,7 +110,6 @@
       if(arguments.length){
         this.html('');
         return $.each(this, function(ind, el){
-          // el.innerHTML = '';
           var newTextNode = document.createTextNode(newText);
           el.appendChild(newTextNode);
         });
@@ -127,9 +126,43 @@
 
       return $(elements);
     },
-    next: function() {},
-    prev: function() {},
-    parent: function() {},
+    next: function() {
+      var nextElements = [];
+
+      $.each(this, function(ind, el){
+        var current = el.nextSibling;
+        while(current && (current.nodeType !== Node.ELEMENT_NODE)){
+          current = current.nextSibling;
+        }
+        if(current){
+          [].push.call(nextElements, current);
+        }
+      });
+      return $(nextElements);
+    },
+    prev: function() {
+      var nextElements = [];
+
+      $.each(this, function(ind, el){
+        var current = el.previousSibling;
+        while(current && (current.nodeType !== Node.ELEMENT_NODE)){
+          current = current.previousSibling;
+        }
+        if(current){
+          [].push.call(nextElements, current);
+        }
+      });
+      return $(nextElements);
+    },
+    parent: function() {
+      var parents = [];
+
+      $.each(this, function(ind, el){
+        [].push.call(parents, el.parentNode)
+      })
+
+      return $(parents);
+    },
     children: function() {},
     attr: function(attrName, value) {},
     css: function(cssPropName, value) {},
