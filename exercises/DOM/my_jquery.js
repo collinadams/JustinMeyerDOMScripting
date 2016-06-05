@@ -1,6 +1,14 @@
 (function() {
   $ = function(selector) {
-    var elements = document.querySelectorAll(selector);
+    if(! (this instanceof $)){
+      return new $(selector);
+    }
+    var elements;
+    if(typeof selector === 'string'){
+      elements = document.querySelectorAll(selector);
+    }else{
+      elements = selector;
+    }
     $.each(elements, $.proxy(function(index, element){
       this[index] = element;
     }, this));
@@ -66,11 +74,59 @@
     }
   });
 
+  var getText = function(el){
+    var txt = '';
+
+    $.each(el.childNodes, function(ind, childNode){
+      if(childNode.nodeType === Node.TEXT_NODE){
+        txt += childNode.nodeValue;
+      }else if(childNode.nodeType === Node.ELEMENT_NODE){
+        txt += getText(childNode);
+      }
+    });
+    return txt;
+  };
+
   $.extend($.prototype, {
-    html: function(newHtml) {},
-    val: function(newVal) {},
-    text: function(newText) {},
-    find: function(selector) {},
+    html: function(newHtml) {
+      if(arguments.length){
+        return $.each(this, function(ind, element){
+          element.innerHTML = newHtml;
+        });
+      }else{
+        return this[0].innerHTML;
+      }
+    },
+    val: function(newVal) {
+      if(arguments.length){
+        return $.each(this, function(ind, el){
+          el.value = newVal;
+        });
+      }else{
+        return this[0].value;
+      }
+    },
+    text: function(newText) {
+      if(arguments.length){
+        this.html('');
+        return $.each(this, function(ind, el){
+          // el.innerHTML = '';
+          var newTextNode = document.createTextNode(newText);
+          el.appendChild(newTextNode);
+        });
+      }else{
+        return this[0] && getText(this[0]);
+      }
+    },
+    find: function(selector) {
+      var elements = [];
+
+      $.each(this, function(ind, el){
+          [].push.apply(elements, el.querySelectorAll(selector));
+      });
+
+      return $(elements);
+    },
     next: function() {},
     prev: function() {},
     parent: function() {},
