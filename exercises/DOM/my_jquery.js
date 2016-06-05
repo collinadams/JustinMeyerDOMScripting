@@ -199,14 +199,20 @@
     },
     css: function(cssPropName, value) {
       if(arguments.length > 1){
-        $.each(this, function(ind, el){
+        return $.each(this, function(ind, el){
           el.style[cssPropName] = value;
         })
       }else{
         return this[0] && document.defaultView.getComputedStyle(this[0]).getPropertyValue(cssPropName);
       }
     },
-    width: function() {},
+    width: function() {
+      var clientWidth = this[0].clientWidth;
+      var leftPadding = parseInt(this.css('padding-left'));
+      var rightPadding = parseInt(this.css('padding-right'));
+
+      return clientWidth - leftPadding - rightPadding;
+    },
     offset: function() {
       var offset = this[0].getBoundingClientRect();
       return {
@@ -214,8 +220,12 @@
         left: offset.left + window.pageXOffset
       };
     },
-    hide: function() {},
-    show: function() {},
+    hide: function() {
+      return this.css('display', 'none');
+    },
+    show: function() {
+      return this.css('display', '');
+    },
 
     // Events
     bind: function(eventName, handler) {},
