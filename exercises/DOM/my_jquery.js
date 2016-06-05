@@ -87,6 +87,25 @@
     return txt;
   };
 
+  function makeTraverser (cb){
+    return function(){
+      var elements = [];
+      var args = arguments;
+
+      $.each(this, function(ind, el){
+        var ret = cb.apply(el, args);
+
+        if(ret && isArrayLike(ret)){
+          [].push.apply(elements, ret);
+        }else if(ret){
+          elements.push(ret);
+        }
+      })
+
+      return $(elements);
+    };
+  }
+
   $.extend($.prototype, {
     html: function(newHtml) {
       if(arguments.length){
@@ -154,16 +173,21 @@
       });
       return $(nextElements);
     },
-    parent: function() {
-      var parents = [];
+    parent: makeTraverser(function(){
+      return this.parentNode;
+    }),
+    // parent: function() {
+    //   var parents = [];
 
-      $.each(this, function(ind, el){
-        [].push.call(parents, el.parentNode)
-      })
+    //   $.each(this, function(ind, el){
+    //     [].push.call(parents, el.parentNode)
+    //   })
 
-      return $(parents);
-    },
-    children: function() {},
+    //   return $(parents);
+    // },
+    children: makeTraverser(function(){
+      return this.children;
+    }),
     attr: function(attrName, value) {},
     css: function(cssPropName, value) {},
     width: function() {},
