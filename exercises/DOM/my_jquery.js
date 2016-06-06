@@ -6,14 +6,15 @@
     var elements;
     if(typeof selector === 'string'){
       elements = document.querySelectorAll(selector);
-    }else{
+    }else if ($.isArray(selector)){
       elements = selector;
     }
-    $.each(elements, $.proxy(function(index, element){
-      this[index] = element;
-    }, this));
-    // [].push.apply(this, elements);
-    this.length = elements.length;
+    [].push.apply(this, elements);
+    // $.each(elements, $.proxy(function(index, element){
+    //   this[index] = element;
+    // }, this));
+    // // [].push.apply(this, elements);
+    // this.length = elements.length;
   };
 
   $.extend = function(target, object) {
@@ -214,6 +215,7 @@
       return clientWidth - leftPadding - rightPadding;
     },
     offset: function() {
+      console.log(this);
       var offset = this[0].getBoundingClientRect();
       return {
         top: offset.top + window.pageYOffset,
@@ -252,12 +254,12 @@
     on: function(eventType, selector, handler) {
       return this.bind(eventType, function(ev){
         var cur = ev.target;
-        do {
+        while (cur && cur !== ev.currentTarget){
           if ($([ cur ]).has(selector).length) {
             handler.call(cur, ev);
           }
           cur = cur.parentNode;
-        } while (cur && cur !== ev.currentTarget);
+        } ;
       });
     },
     off: function(eventType, selector, handler) {},
